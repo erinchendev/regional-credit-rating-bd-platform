@@ -531,7 +531,7 @@ def build_map_fig(sc_zt: pd.DataFrame, filter_lv="", filter_rt="", fiscal_cities
     if emp_rows:
         emp_df = pd.DataFrame(emp_rows)
         fig.add_trace(go.Scattergeo(lon=emp_df["lon"], lat=emp_df["lat"], text=emp_df["城市"],
-                                    hovertemplate="%{text}<br>暂无公开发债的被评主体<extra></extra>",
+                                    hovertemplate="%{text}<br>暂无已发债的被评主体<extra></extra>",
                                     mode="markers",
                                     marker=dict(size=10, color="#bdbdbd", opacity=0.5, line=dict(width=1, color="white"), sizemode="diameter"),
                                     name="暂无被评主体", showlegend=True))
@@ -1069,7 +1069,7 @@ with tabs[0]:
 # TAB 1  已评级主体全景
 # ────────────────────────────────────────────
 with tabs[1]:
-    st.markdown('<div class="sec-note">本部分展示已评级主体地理分布及名单。注：这些主体均已公开发债。</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-note">本部分展示已评级主体地理分布及名单。注：这些主体均已发债。</div>', unsafe_allow_html=True)
     st.markdown('<div class="sec-title">已评级主体地图分布</div>', unsafe_allow_html=True)
     mc1, mc2 = st.columns(2)
     with mc1:
@@ -1087,7 +1087,7 @@ with tabs[1]:
     map_fig = build_map_fig(sc_zt, "" if map_lv=="全部行政级别" else map_lv, "" if map_rt=="全部信用级别" else map_rt, fiscal_cities=_fiscal_cities)
     map_fig.update_geos(fitbounds="locations", visible=False, resolution=50, showcountries=True, countrycolor="#d1e0de")
     st.plotly_chart(map_fig, use_container_width=True, config=PLOTLY_CFG)
-    st.markdown('<div class="sec-note">气泡大小=主体数 | 颜色=最高信用级别 | 灰色=该城市暂无公开发债的被评主体 | 悬停查看详情</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-note">气泡大小=主体数 | 颜色=最高信用级别 | 灰色=该城市暂无已发债的被评主体 | 悬停查看详情</div>', unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown(f'<div class="sec-title">{prov_name}已评级主体名单</div>', unsafe_allow_html=True)
@@ -1128,7 +1128,7 @@ with tabs[1]:
 # TAB 2  准入门槛模拟器
 # ────────────────────────────────────────────
 with tabs[2]:
-    st.markdown('<div class="sec-note">根据已公开发债的受评主体数据，模拟特定城市+行政级别+信用级别下的财务门槛；输入新主体数据后自动打分并给出承做建议。</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-note">根据已发债的受评主体数据，模拟特定城市+行政级别+信用级别下的财务门槛；输入新主体数据后自动打分并给出承做建议。</div>', unsafe_allow_html=True)
     sim_c1, sim_c2 = st.columns([1, 1])
     with sim_c1:
         st.markdown("**📍 定位目标市场**")

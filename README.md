@@ -11,6 +11,7 @@
 ## 目录
 
 - [项目定位](#项目定位)
+- [项目预览](#项目预览)
 - [技术架构](#技术架构)
 - [项目结构](#项目结构)
 - [快速开始](#快速开始)
@@ -35,6 +36,48 @@
 - **交付物 2**：`credit_indicators.duckdb` 文件，客户可直接用 Tableau / Power BI 等连接做自定义分析
 
 > 交付细节见[交付方案说明](#交付方案说明)
+
+---
+
+## 项目预览
+
+在线预览：[credit-bd-plat.streamlit.app](https://credit-bd-plat.streamlit.app/)
+
+项目截图：
+
+评级机构全景
+
+![评级机构全景](screenshots/0.png)
+![评级机构全景](screenshots/1.png)
+![评级机构全景](screenshots/2.png)
+
+
+<details>
+<summary>点击展开查看所有 Tab 截图</summary>
+
+**已评级主体全景**
+
+![已评级主体全景](screenshots/3.png)
+
+![已评级主体全景](screenshots/4.png)
+
+**准入门槛模拟器**
+
+![准入门槛模拟器](screenshots/5.png)
+
+**展业帮手圈**
+
+![展业帮手圈](screenshots/6.png)
+
+**我方评级发债案例**
+
+![我方评级发债案例](screenshots/7.png)
+
+**导出html报告示例**
+
+![导出html报告示例](screenshots/8.png)
+
+</details>
 
 ---
 
@@ -378,15 +421,14 @@ else:
 | **全局**  | 省份 KPI            | `v_province_kpi`                      | `len(sc_zt)` + `df_sc.sum()` |                                      |
 | **Tab 0** | 评级机构排名表      | `v_agency_market_share`               | `mart_agency_stats()`          |                                      |
 | **Tab 0** | 饼图 / 柱状图       | 从`v_agency_market_share` 派生        | 从排名表派生                     |                                      |
-| **Tab 0** | 竞争热力矩阵（4维） | `v_agency_competitive_landscape`      | `mart_competition_matrix()`    | 动态透视仅 pandas，DuckDB 提供数据源 |
+| **Tab 0** | 竞争热力矩阵（4维） | `—`（仅取机构名单）                  | `mart_competition_matrix()`    | 四维动态透视始终由 pandas 计算，DuckDB 仅提供数据源（含机构名单） |
 | **Tab 1** | 主体地图 / 名单表   | `v_issuer_profile`                    | `int_build_issuer_view()`      |                                      |
-| **Tab 1** | 城市主体明细        | `v_city_credit_overview`              | 实时`groupby`                  |                                      |
-| **Tab 2** | 准入门槛分位数      | `v_financial_bench`                   | `mart_financial_bench()`       |                                      |
-| **Tab 3** | 主承销商排名        | `v_underwriter_stats`（先聚合至省级） | `mart_underwriter_stats()`     |                                      |
+| **Tab 2** | 准入门槛分位数      | `int_v_issuer_enriched`（内联聚合）   | `mart_financial_bench()`       | 对等视图 `v_financial_bench` 存在，当前 app 未直接引用（供 BI / 测试） |
+| **Tab 3** | 主承销商排名        | `v_underwriter_stats`                 | `mart_underwriter_stats()`     | 已计算（sc_uw），暂未接入 Tab 展示 |
 | **Tab 3** | 展业帮手圈          | `v_partner_network` JOIN 省份城市集合 | `mart_partner_network()`       |                                      |
 | **Tab 4** | 发债案例明细        | `v_bond` WHERE 省份+机构+城市         | 筛选`df_sc`                    |                                      |
 
-> **说明**：`mart_competition_matrix()` 的四维动态透视（城市 / 行政级别 / 评级 / 财力段）需要在运行时确定列结构，不适合固化为静态 SQL 视图，因此该模块始终使用 pandas 计算，DuckDB 仅提供原始数据。
+> **说明**：（1）`mart_competition_matrix()` 的四维动态透视（城市 / 行政级别 / 评级 / 财力段）需要在运行时确定列结构，不适合固化为静态 SQL 视图，因此该模块始终使用 pandas 计算，DuckDB 仅提供原始数据。（2）准入门槛模拟器需要"任意维度通配 + 实时聚合"，而分位数不可加总。`v_financial_bench` = 给 BI 的"固定组合点查"预聚合宽表；`int_v_issuer_enriched` 内联聚合 = 给模拟器的"任意组合（含通配）实时算"。两者粒度、用途不同。
 
 ---
 
